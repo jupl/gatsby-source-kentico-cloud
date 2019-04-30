@@ -45,7 +45,25 @@ const parseContentItemContents =
         });
         propertyValue = linkedItems;
       } else {
-        propertyValue = contentItem[key];
+        // TODO replace whole else statement by:
+        // propertyValue = _.cloneDeep(contentItem[key]);
+        // After upgrade to "kentico-cloud-delivery" version 6
+        propertyValue = _.cloneDeep(contentItem[key]);
+        if (_.get(contentItem, `elements[${key}].type`) === 'rich_text') {
+          const imagesWithDimensions = _.get(
+            contentItem,
+            `elements[${key}].images`
+          );
+          propertyValue.images.forEach((image) => {
+            if (
+              imagesWithDimensions[image.imageId].width
+              && imagesWithDimensions[image.imageId].height
+            ) {
+              image.width = imagesWithDimensions[image.imageId].width;
+              image.height = imagesWithDimensions[image.imageId].height;
+            }
+          });
+        }
       }
 
       elements[key] = propertyValue;

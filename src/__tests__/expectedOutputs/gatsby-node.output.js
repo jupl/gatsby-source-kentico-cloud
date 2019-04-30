@@ -21,11 +21,15 @@ const expectedResolvedRichTextImages = [{
   imageId: 'a58bf56b-962e-44dd-9fae-b562e3322119',
   description: 'Hand Coffee Grinder',
   url: 'https://assets-us-01.kc-usercontent.com:443/e5d9fb27-0227-00b1-1daf-05eb8ff5cb6e/a58bf56b-962e-44dd-9fae-b562e3322119/porlex-tall-ceramic-burr-grinder.jpg',
+  width: 1080,
+  height: 1080,
 },
 {
   imageId: '542ea709-63a8-4413-ae03-dd9c681efbf2',
   description: 'Hario Vacuum Pot',
   url: 'https://assets-us-01.kc-usercontent.com:443/e5d9fb27-0227-00b1-1daf-05eb8ff5cb6e/542ea709-63a8-4413-ae03-dd9c681efbf2/hario-vacuum-pot.jpg',
+  width: 540,
+  height: 540,
 }];
 
 module.exports = {
