@@ -71,11 +71,10 @@ const parseContentItemContents =
 const createKcArtifactNode =
   (nodeId, kcArtifact, artifactKind, codeName = ``,
     additionalNodeData = null) => {
-    const nodeContent = JSON.stringify(kcArtifact);
-
+    const {codename, lastModified, type} = kcArtifact.system;
     const nodeContentDigest = crypto
       .createHash(`md5`)
-      .update(nodeContent)
+      .update(`${type} ${codename} ${lastModified}`)
       .digest(`hex`);
 
     const codenamePascalCase = changeCase.pascalCase(codeName);
