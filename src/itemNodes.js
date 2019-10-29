@@ -36,12 +36,14 @@ const getFromDefaultLanguage = async (
     .resolveHtml(allItems);
 
   const itemsFlatted = parse(stringify(allItems));
+  const parseContentItemContents = normalize.parseContentItemContentsFactory();
   const contentItemNodes = itemsFlatted.map((contentItem) => {
     try {
       return createContentItemNode(
         createNodeId,
         contentItem,
-        contentTypeNodes
+        contentTypeNodes,
+        parseContentItemContents,
       );
     } catch (error) {
       console.error(error);
@@ -81,11 +83,13 @@ const getFromNonDefaultLanguage = async (
       .resolveHtml(allItems);
 
     const languageItemsFlatted = parse(stringify(allItems));
+    const parseContentItemContents = normalize.parseContentItemContentsFactory();
     const contentItemsNodes = languageItemsFlatted.map((languageItem) =>
       createContentItemNode(
         createNodeId,
         languageItem,
-        contentTypeNodes
+        contentTypeNodes,
+        parseContentItemContents
       )
     );
     nonDefaultLanguageItemNodes.set(languageCodename, contentItemsNodes);
@@ -102,7 +106,7 @@ const getFromNonDefaultLanguage = async (
  * @throws {Error}
  */
 const createContentItemNode =
-  (createNodeId, contentItem, contentTypeNodes) => {
+  (createNodeId, contentItem, contentTypeNodes, parseContentItemContents) => {
     if (!_.isFunction(createNodeId)) {
       throw new Error(`createNodeId is not a function.`);
     }
@@ -123,7 +127,7 @@ const createContentItemNode =
       (contentType) => contentType.system.codename
         === contentItem.system.type);
 
-    const itemWithElements = normalize.parseContentItemContents(contentItem);
+    const itemWithElements = parseContentItemContents(contentItem);
 
     const additionalData = {
       otherLanguages___NODE: [],

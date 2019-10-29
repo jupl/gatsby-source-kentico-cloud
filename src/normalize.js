@@ -2,8 +2,14 @@ const _ = require(`lodash`);
 const crypto = require(`crypto`);
 const changeCase = require(`change-case`);
 
+const parseContentItemContentsFactory = () => {
+  const cache = {};
+  return (...args) => parseContentItemContents(cache, ...args);
+};
+
 /**
  * Parses a content item to rebuild the 'elements' property.
+ * @param {object} cache - The cache
  * @param {object} contentItem - The content item to be parsed.
  * @param {array} processedContents - The array with the recursion
  * traversal history.
@@ -11,7 +17,7 @@ const changeCase = require(`change-case`);
  * @throws {Error}
  */
 const parseContentItemContents =
-  (contentItem, processedContents = []) => {
+  (cache, contentItem, processedContents = []) => {
     if (processedContents.includes(contentItem.system.codename)) {
       processedContents.push(contentItem.system.codename);
       const flatted = processedContents.join(` -> `);
@@ -25,6 +31,9 @@ const parseContentItemContents =
     }
 
     processedContents.push(contentItem.system.codename);
+    if (cache[contentItem.system.codename]) {
+      return cache[contentItem.system.codename];
+    }
     const elements = {};
 
     const elementPropertyKeys = Object
@@ -39,7 +48,7 @@ const parseContentItemContents =
         contentItem[key].forEach((linkedItem) => {
           linkedItems.push(
             parseContentItemContents(
-              linkedItem, Array.from(processedContents), contentItem
+              cache, linkedItem, Array.from(processedContents)
             )
           );
         });
@@ -56,6 +65,7 @@ const parseContentItemContents =
       elements: elements,
     };
 
+    cache[contentItem.system.codename] = itemWithElements;
     return itemWithElements;
   };
 
@@ -119,5 +129,5 @@ const addLinkedItemsLinks =
 module.exports = {
   createKcArtifactNode,
   addLinkedItemsLinks,
-  parseContentItemContents,
+  parseContentItemContentsFactory,
 };
